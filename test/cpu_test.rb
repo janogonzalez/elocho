@@ -84,6 +84,28 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 8XY4 instruction" do
+    it "sets register VX to the sum of registers VX and VY" do
+      @cpu.load [0x62, 0x80,
+                 0x61, 0x02,
+                 0x81, 0x24]
+      3.times { @cpu.step }
+      @cpu.v[1].must_equal 0x82
+      @cpu.v[0xF].must_equal 0x00
+      @cpu.pc.must_equal 0x206
+    end
+
+    it "sets the VF register when there is carry" do
+      @cpu.load [0x62, 0xFF,
+                 0x61, 0x03,
+                 0x81, 0x24]
+      3.times { @cpu.step }
+      @cpu.v[1].must_equal 0x02
+      @cpu.v[0xF].must_equal 0x01
+      @cpu.pc.must_equal 0x206
+    end
+  end
+
   describe "with a ANNN instruction" do
     it "loads the NNN value into the I register" do
       @cpu.load [0xA4, 0x82]

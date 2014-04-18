@@ -63,6 +63,11 @@ module ElOcho
           v[to] = (v[to] & v[from])
         when 0x0003
           v[to] = (v[to] ^ v[from])
+        when 0x0004
+          result = v[to] + v[from]
+
+          v[0xF] = (result > 0xFF) ? 1 : 0
+          v[to] = result & 0xFF
         end
 
         @pc += 0x002
