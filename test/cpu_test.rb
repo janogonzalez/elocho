@@ -62,4 +62,13 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x206
     end
   end
+
+  describe "with a 8XY3 instruction" do
+    it "sets register X to the XOR between registers X and Y" do
+      @cpu.load [0x62, 0xCC, 0x61, 0xAA, 0x81, 0x23]
+      3.times { @cpu.step }
+      @cpu.v[1].must_equal 0x66
+      @cpu.pc.must_equal 0x206
+    end
+  end
 end
