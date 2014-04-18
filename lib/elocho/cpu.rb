@@ -66,6 +66,11 @@ module ElOcho
         end
 
         @pc += 0x002
+      when 0xA000
+        address = opcode & 0x0FFF
+
+        @i = address
+        @pc += 2
       end
     end
 

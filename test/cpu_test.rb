@@ -83,4 +83,13 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x206
     end
   end
+
+  describe "with a ANNN instruction" do
+    it "loads the NNN value into the I register" do
+      @cpu.load [0xA4, 0x82]
+      @cpu.step
+      @cpu.i.must_equal 0x482
+      @cpu.pc.must_equal 0x202
+    end
+  end
 end
