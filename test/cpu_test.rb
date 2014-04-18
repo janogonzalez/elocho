@@ -7,7 +7,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 1NNN instruction" do
-    it "loads the NNN value into the PC register" do
+    it "sets PC to NNN" do
       @cpu.load [0x14, 0x82]
       @cpu.step
       @cpu.pc.must_equal 0x482
@@ -15,7 +15,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 6XNN instruction" do
-    it "loads the NN value into register VX" do
+    it "sets VX to NN" do
       @cpu.load [0x62, 0x82]
       @cpu.step
       @cpu.v[2].must_equal 0x82
@@ -24,7 +24,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 7XNN instruction" do
-    it "adds the NN value into register VX" do
+    it "sets VX to VX + NN" do
       @cpu.load [0x72, 0x80,
                  0x72, 0x02]
       2.times { @cpu.step }
@@ -42,7 +42,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY0 instruction" do
-    it "sets register VX to the value of register VY" do
+    it "sets VX to VY" do
       @cpu.load [0x62, 0x82,
                  0x81, 0x20]
       2.times { @cpu.step }
@@ -52,7 +52,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY1 instruction" do
-    it "sets register VX to the OR between registers VX and VY" do
+    it "sets VX to the bitwise OR between VX and VY" do
       @cpu.load [0x62, 0xCC,
                  0x61, 0x11,
                  0x81, 0x21]
@@ -63,7 +63,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY2 instruction" do
-    it "sets register VX to the AND between registers VX and VY" do
+    it "sets VX to the bitwise AND between VX and VY" do
       @cpu.load [0x62, 0xCC,
                  0x61, 0xAA,
                  0x81, 0x22]
@@ -74,7 +74,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY3 instruction" do
-    it "sets register VX to the XOR between registers VX and VY" do
+    it "sets VX to the bitwise XOR between VX and VY" do
       @cpu.load [0x62, 0xCC,
                  0x61, 0xAA,
                  0x81, 0x23]
@@ -85,7 +85,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY4 instruction" do
-    it "sets register VX to the sum of registers VX and VY" do
+    it "sets VX to VX + VY" do
       @cpu.load [0x62, 0x80,
                  0x61, 0x02,
                  0x81, 0x24]
@@ -95,7 +95,7 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x206
     end
 
-    it "sets the VF register when there is carry" do
+    it "sets VF when there is a carry" do
       @cpu.load [0x62, 0xFF,
                  0x61, 0x03,
                  0x81, 0x24]
@@ -107,7 +107,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a ANNN instruction" do
-    it "loads the NNN value into the I register" do
+    it "sets I to NNN" do
       @cpu.load [0xA4, 0x82]
       @cpu.step
       @cpu.i.must_equal 0x482
@@ -116,7 +116,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a BNNN instruction" do
-    it "loads the sum of the NNN value and V0 register into the PC register" do
+    it "sets PC to NNN + V0" do
       @cpu.load [0x60, 0x82,
                  0xB1, 0x01]
       2.times { @cpu.step }
