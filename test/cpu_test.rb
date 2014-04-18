@@ -44,4 +44,13 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x204
     end
   end
+
+  describe "with a 8XY1 instruction" do
+    it "sets register X to the OR between registers X and Y" do
+      @cpu.load [0x62, 0xCC, 0x61, 0x11, 0x81, 0x21]
+      3.times { @cpu.step }
+      @cpu.v[1].must_equal 0xDD
+      @cpu.pc.must_equal 0x206
+    end
+  end
 end

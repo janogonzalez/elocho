@@ -43,12 +43,14 @@ module ElOcho
 
         v[register] = (v[register] + value) & 0xFF
       when 0x8000
+        to = (opcode & 0x0F00) >> 8
+        from = (opcode & 0x00F0) >> 4
+
         case opcode & 0x000F
         when 0x0000
-          to = (opcode & 0x0F00) >> 8
-          from = (opcode & 0x00F0) >> 4
-
           v[to] = v[from]
+        when 0x0001
+          v[to] = (v[to] | v[from])
         end
       end
 
