@@ -34,4 +34,14 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x204
     end
   end
+
+  describe "with a 8XY0 instruction" do
+    it "sets register X to the value of register Y" do
+      @cpu.load [0x62, 0x82, 0x81, 0x20]
+      @cpu.step
+      @cpu.step
+      @cpu.v[1].must_equal 0x82
+      @cpu.pc.must_equal 0x204
+    end
+  end
 end
