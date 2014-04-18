@@ -32,16 +32,24 @@ module ElOcho
       opcode = word_at(@pc)
 
       case opcode & 0xF000
+      when 0x1000
+        address = opcode & 0x0FFF
+
+        @pc = address
       when 0x6000
         register = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
         v[register] = value
+
+        @pc += 0x002
       when 0x7000
         register = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
         v[register] = (v[register] + value) & 0xFF
+
+        @pc += 0x002
       when 0x8000
         to = (opcode & 0x0F00) >> 8
         from = (opcode & 0x00F0) >> 4
@@ -56,9 +64,9 @@ module ElOcho
         when 0x0003
           v[to] = (v[to] ^ v[from])
         end
-      end
 
-      @pc += 0x002
+        @pc += 0x002
+      end
     end
 
     private

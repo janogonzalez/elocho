@@ -6,6 +6,14 @@ describe ElOcho::CPU do
     @cpu = ElOcho::CPU.new
   end
 
+  describe "with a 1NNN instruction" do
+    it "loads the NNN value into the PC register" do
+      @cpu.load [0x14, 0x82]
+      @cpu.step
+      @cpu.pc.must_equal 0x482
+    end
+  end
+
   describe "with a 6XNN instruction" do
     it "loads the NN value into register X" do
       @cpu.load [0x62, 0x82]
