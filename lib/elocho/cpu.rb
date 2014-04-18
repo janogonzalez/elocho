@@ -11,7 +11,7 @@ module ElOcho
 
     # Initializes a new CPU with the default values.
     def initialize
-      @v = Array.new(16, 0xFF)
+      @v = Array.new(16, 0x00)
       @pc = 0x200
       @i = 0x000
       @memory = Array.new(4096, 0x00)
