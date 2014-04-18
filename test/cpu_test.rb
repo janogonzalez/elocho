@@ -14,4 +14,24 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x202
     end
   end
+
+  describe "with a 7XNN instruction" do
+    it "adds the NN value into register X" do
+      @cpu.load [0x72, 0x80, 0x72, 0x02, 0x72]
+      @cpu.step
+      @cpu.v[2].must_equal 0x80
+      @cpu.pc.must_equal 0x202
+      @cpu.step
+      @cpu.v[2].must_equal 0x82
+      @cpu.pc.must_equal 0x204
+    end
+
+    it "applies the 0xFF mask to the result" do
+      @cpu.load [0x72, 0xFF, 0x72, 0x82]
+      @cpu.step
+      @cpu.step
+      @cpu.v[2].must_equal 0x81
+      @cpu.pc.must_equal 0x204
+    end
+  end
 end

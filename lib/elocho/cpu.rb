@@ -37,6 +37,11 @@ module ElOcho
         value = opcode & 0x00FF
 
         v[register] = value
+      when 0x7000
+        register = (opcode & 0x0F00) >> 8
+        value = opcode & 0x00FF
+
+        v[register] = (v[register] + value) & 0xFF
       end
 
       @pc += 0x002
