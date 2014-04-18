@@ -15,7 +15,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 6XNN instruction" do
-    it "loads the NN value into register X" do
+    it "loads the NN value into register VX" do
       @cpu.load [0x62, 0x82]
       @cpu.step
       @cpu.v[2].must_equal 0x82
@@ -24,7 +24,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 7XNN instruction" do
-    it "adds the NN value into register X" do
+    it "adds the NN value into register VX" do
       @cpu.load [0x72, 0x80,
                  0x72, 0x02]
       2.times { @cpu.step }
@@ -42,7 +42,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY0 instruction" do
-    it "sets register X to the value of register Y" do
+    it "sets register VX to the value of register VY" do
       @cpu.load [0x62, 0x82,
                  0x81, 0x20]
       2.times { @cpu.step }
@@ -52,7 +52,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY1 instruction" do
-    it "sets register X to the OR between registers X and Y" do
+    it "sets register VX to the OR between registers VX and VY" do
       @cpu.load [0x62, 0xCC,
                  0x61, 0x11,
                  0x81, 0x21]
@@ -63,7 +63,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY2 instruction" do
-    it "sets register X to the AND between registers X and Y" do
+    it "sets register VX to the AND between registers VX and VY" do
       @cpu.load [0x62, 0xCC,
                  0x61, 0xAA,
                  0x81, 0x22]
@@ -74,7 +74,7 @@ describe ElOcho::CPU do
   end
 
   describe "with a 8XY3 instruction" do
-    it "sets register X to the XOR between registers X and Y" do
+    it "sets register VX to the XOR between registers VX and VY" do
       @cpu.load [0x62, 0xCC,
                  0x61, 0xAA,
                  0x81, 0x23]
