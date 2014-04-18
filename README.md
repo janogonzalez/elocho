@@ -41,6 +41,8 @@ According to a lot of programmers CHIP-8 is the easiest game platform to
 emulate and my [GameBoy emulator][mimey] will take some time to complete, so I
 just want to have at least one finished emulator in the near future.
 
+[mimey]: https://github.com/janogonzalez/mimey
+
 ## Licence
 
 MIT.
