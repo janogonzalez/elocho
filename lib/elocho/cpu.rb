@@ -71,6 +71,10 @@ module ElOcho
 
         @i = address
         @pc += 2
+      when 0xB000
+        address = opcode & 0x0FFF
+
+        @pc = (@v[0] + address) & 0xFFF
       end
     end
 

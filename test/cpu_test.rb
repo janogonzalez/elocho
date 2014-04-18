@@ -92,4 +92,13 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x202
     end
   end
+
+  describe "with a BNNN instruction" do
+    it "loads the sum of the NNN value and V0 register into the PC register" do
+      @cpu.load [0x60, 0x82,
+                 0xB1, 0x01]
+      2.times { @cpu.step }
+      @cpu.pc.must_equal 0x183
+    end
+  end
 end
