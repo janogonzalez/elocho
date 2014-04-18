@@ -40,14 +40,14 @@ module ElOcho
         register = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
-        v[register] = value
+        @v[register] = value
 
         @pc += 0x002
       when 0x7000
         register = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
-        v[register] = (v[register] + value) & 0xFF
+        @v[register] = (@v[register] + value) & 0xFF
 
         @pc += 0x002
       when 0x8000
@@ -56,18 +56,18 @@ module ElOcho
 
         case opcode & 0x000F
         when 0x0000
-          v[to] = v[from]
+          @v[to] = @v[from]
         when 0x0001
-          v[to] = (v[to] | v[from])
+          @v[to] = (@v[to] | @v[from])
         when 0x0002
-          v[to] = (v[to] & v[from])
+          @v[to] = (@v[to] & @v[from])
         when 0x0003
-          v[to] = (v[to] ^ v[from])
+          @v[to] = (@v[to] ^ @v[from])
         when 0x0004
-          result = v[to] + v[from]
+          result = @v[to] + @v[from]
 
-          v[0xF] = (result > 0xFF) ? 1 : 0
-          v[to] = result & 0xFF
+          @v[0xF] = (result > 0xFF) ? 1 : 0
+          @v[to] = result & 0xFF
         end
 
         @pc += 0x002
