@@ -128,6 +128,28 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 8XY7 instruction" do
+    it "sets VX to VY - VX" do
+      @cpu.load [0x62, 0x84,
+                 0x61, 0x02,
+                 0x81, 0x27]
+      3.times { @cpu.step }
+      @cpu.v[1].must_equal 0x82
+      @cpu.v[0xF].must_equal 0x01
+      @cpu.pc.must_equal 0x206
+    end
+
+    it "does not set VF when there is a borrow" do
+      @cpu.load [0x62, 0x03,
+                 0x61, 0xFF,
+                 0x81, 0x27]
+      3.times { @cpu.step }
+      @cpu.v[1].must_equal 0x04
+      @cpu.v[0xF].must_equal 0x00
+      @cpu.pc.must_equal 0x206
+    end
+  end
+
   describe "with a ANNN instruction" do
     it "sets I to NNN" do
       @cpu.load [0xA4, 0x82]
