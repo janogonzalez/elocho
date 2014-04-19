@@ -81,6 +81,9 @@ module ElOcho
 
           @v[0xF] = (@v[from] > @v[to]) ? 1 : 0
           @v[to] = result & 0xFF
+        when 0x0008
+          @v[0xF] = (@v[to] & 0x80) >> 7
+          @v[to] = (@v[to] << 1) & 0xFF
         end
 
         @pc += 0x002

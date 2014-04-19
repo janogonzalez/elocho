@@ -170,6 +170,26 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 8XY8 instruction" do
+    it "sets VX to VX << 1" do
+      @cpu.load [0x62, 0x04,
+                 0x82, 0x08]
+      2.times { @cpu.step }
+      @cpu.v[2].must_equal 0x08
+      @cpu.v[0xF].must_equal 0x00
+      @cpu.pc.must_equal 0x204
+    end
+
+    it "sets VF when the most significant bit is 1" do
+      @cpu.load [0x62, 0xFF,
+                 0x82, 0x08]
+      2.times { @cpu.step }
+      @cpu.v[2].must_equal 0xFE
+      @cpu.v[0xF].must_equal 0x01
+      @cpu.pc.must_equal 0x204
+    end
+  end
+
   describe "with a ANNN instruction" do
     it "sets I to NNN" do
       @cpu.load [0xA4, 0x82]
