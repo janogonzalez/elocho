@@ -73,6 +73,9 @@ module ElOcho
 
           @v[0xF] = (@v[to] > @v[from]) ? 1 : 0
           @v[to] = result & 0xFF
+        when 0x0006
+          @v[0xF] = @v[to] & 0x01
+          @v[to] = @v[to] >> 1
         when 0x0007
           result = @v[from] - @v[to]
 

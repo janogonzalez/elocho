@@ -128,6 +128,26 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 8XY6 instruction" do
+    it "sets VX to VX >> 1" do
+      @cpu.load [0x62, 0x04,
+                 0x82, 0x06]
+      2.times { @cpu.step }
+      @cpu.v[2].must_equal 0x02
+      @cpu.v[0xF].must_equal 0x00
+      @cpu.pc.must_equal 0x204
+    end
+
+    it "sets VF when the least significant bit is 1" do
+      @cpu.load [0x62, 0xFF,
+                 0x82, 0x06]
+      2.times { @cpu.step }
+      @cpu.v[2].must_equal 0x7F
+      @cpu.v[0xF].must_equal 0x01
+      @cpu.pc.must_equal 0x204
+    end
+  end
+
   describe "with a 8XY7 instruction" do
     it "sets VX to VY - VX" do
       @cpu.load [0x62, 0x84,
