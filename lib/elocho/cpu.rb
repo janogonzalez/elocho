@@ -54,6 +54,17 @@ module ElOcho
         else
           @pc += 2
         end
+      when 0x5000
+        if (opcode & 0x000F) == 0
+          x = (opcode & 0x0F00) >> 8
+          y = (opcode & 0x00F0) >> 4
+
+          if @v[x] == @v[y]
+            @pc += 4
+          else
+            @pc += 2
+          end
+        end
       when 0x6000
         register = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF

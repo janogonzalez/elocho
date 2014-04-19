@@ -46,6 +46,24 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 5XN0 instruction" do
+    it "skips the next instruction if VX == VY" do
+      @cpu.load [0x62, 0x82,
+                 0x61, 0x82,
+                 0x51, 0x20]
+      3.times { @cpu.step }
+      @cpu.pc.must_equal 0x208
+    end
+
+    it "continues if the next instruction is VX != VY" do
+      @cpu.load [0x62, 0x82,
+                 0x61, 0x81,
+                 0x51, 0x20]
+      3.times { @cpu.step }
+      @cpu.pc.must_equal 0x206
+    end
+  end
+
   describe "with a 6XNN instruction" do
     it "sets VX to NN" do
       @cpu.load [0x62, 0x82]
