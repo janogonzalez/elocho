@@ -36,6 +36,15 @@ module ElOcho
         address = opcode & 0x0FFF
 
         @pc = address
+      when 0x3000
+        register = (opcode & 0x0F00) >> 8
+        value = opcode & 0x00FF
+
+        if @v[register] == value
+          @pc += 4
+        else
+          @pc += 2
+        end
       when 0x6000
         register = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF

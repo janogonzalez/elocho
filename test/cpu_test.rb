@@ -14,6 +14,22 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 3XNN instruction" do
+    it "skips the next instruction if VX == NN" do
+      @cpu.load [0x62, 0x82,
+                 0x32, 0x82]
+      2.times { @cpu.step }
+      @cpu.pc.must_equal 0x206
+    end
+
+    it "continues if the next instruction if VX != NN" do
+      @cpu.load [0x62, 0x82,
+                 0x32, 0x81]
+      2.times { @cpu.step }
+      @cpu.pc.must_equal 0x204
+    end
+  end
+
   describe "with a 6XNN instruction" do
     it "sets VX to NN" do
       @cpu.load [0x62, 0x82]
