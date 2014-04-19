@@ -45,6 +45,15 @@ module ElOcho
         else
           @pc += 2
         end
+      when 0x4000
+        register = (opcode & 0x0F00) >> 8
+        value = opcode & 0x00FF
+
+        if @v[register] != value
+          @pc += 4
+        else
+          @pc += 2
+        end
       when 0x6000
         register = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
