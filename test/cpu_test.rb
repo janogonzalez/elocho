@@ -22,7 +22,7 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x206
     end
 
-    it "continues if the next instruction if VX != NN" do
+    it "continues if the next instruction is VX != NN" do
       @cpu.load [0x62, 0x82,
                  0x32, 0x81]
       2.times { @cpu.step }
