@@ -240,6 +240,23 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 9XN0 instruction" do
+    it "skips the next instruction if VX != VY" do
+      @cpu.load [0x62, 0x82,
+                 0x61, 0x81,
+                 0x91, 0x20]
+      3.times { @cpu.step }
+      @cpu.pc.must_equal 0x208
+    end
+
+    it "continues to the next instruction if VX == VY" do
+      @cpu.load [0x62, 0x82,
+                 0x61, 0x82,
+                 0x91, 0x20]
+      3.times { @cpu.step }
+      @cpu.pc.must_equal 0x206
+    end
+  end
   describe "with a ANNN instruction" do
     it "sets I to NNN" do
       @cpu.load [0xA4, 0x82]

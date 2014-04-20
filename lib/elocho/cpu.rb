@@ -116,6 +116,17 @@ module ElOcho
         end
 
         @pc += 0x002
+      when 0x9000
+        if (opcode & 0x000F) == 0
+          x = (opcode & 0x0F00) >> 8
+          y = (opcode & 0x00F0) >> 4
+
+          if @v[x] != @v[y]
+            @pc += 4
+          else
+            @pc += 2
+          end
+        end
       when 0xA000
         address = opcode & 0x0FFF
 
