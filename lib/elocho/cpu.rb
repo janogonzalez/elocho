@@ -46,6 +46,13 @@ module ElOcho
       @pc += 2
 
       case opcode & 0xF000
+      when 0x0000
+        case opcode & 0x0FFF
+        when 0x0000
+          # Ignored
+        when 0x00E0
+        when 0x0EE
+        end
       when 0x1000
         address = opcode & 0x0FFF
 
@@ -135,6 +142,21 @@ module ElOcho
         address = opcode & 0x0FFF
 
         @pc = (@v[0] + address) & 0xFFF
+      when 0xC000
+      when 0xD000
+      when 0xE000
+      when 0xF000
+        case opcode & 0x00FF
+        when 0x0007
+        when 0x000A
+        when 0x0015
+        when 0x0018
+        when 0x001E
+        when 0x0029
+        when 0x0033
+        when 0x0055
+        when 0x0065
+        end
       end
     end
 
