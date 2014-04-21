@@ -14,6 +14,32 @@ describe ElOcho::CPU do
     end
   end
 
+  describe "with a 2NNN instruction" do
+    it "pushes the PC to the stack" do
+      @cpu.load [0x24, 0x82]
+      @cpu.step
+      @cpu.stack.first.must_equal 0x202
+      @cpu.sp.must_equal 0
+      @cpu.pc.must_equal 0x482
+    end
+
+    it "fails then the stack overflows" do
+      overflow = ElOcho::CPU::STACK_SIZE + 1
+      program = []
+
+      overflow.times do |i|
+        program << 0x22
+        program << 0x02 + (i * 2)
+      end
+
+      @cpu.load program
+
+      proc {
+        overflow.times { @cpu.step }
+      }.must_raise RuntimeError
+    end
+  end
+
   describe "with a 3XNN instruction" do
     it "skips the next instruction if VX == NN" do
       @cpu.load [0x62, 0x82,

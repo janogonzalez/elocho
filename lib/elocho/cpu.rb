@@ -1,9 +1,11 @@
 module ElOcho
   class CPU
-    # Size of the memory
+    # Size of the memory.
     MEMORY_SIZE = 4096
-    # Start address for the programs
+    # Start address for the programs.
     PROGRAM_MEMORY_START = 0x200
+    # The size of the stack.
+    STACK_SIZE = 16
 
     # V0 to VF: The 16 8-bit general purpose registers.
     attr_reader :v
@@ -13,6 +15,10 @@ module ElOcho
     attr_reader :i
     # The memory, 4k 8-bit cells.
     attr_reader :memory
+    # The stack with memory addresses.
+    attr_reader :stack
+    # SP: The stack pointer.
+    attr_reader :sp
 
     # Initializes a new CPU with the default values.
     def initialize
@@ -20,6 +26,8 @@ module ElOcho
       @pc = PROGRAM_MEMORY_START
       @i = 0x000
       @memory = Array.new(MEMORY_SIZE, 0x00)
+      @stack = Array.new(STACK_SIZE, 0x000)
+      @sp = -1
     end
 
     # Loads a rom into memory.
@@ -35,10 +43,19 @@ module ElOcho
     # Executes one step.
     def step
       opcode = word_at(@pc)
+      @pc += 2
 
       case opcode & 0xF000
       when 0x1000
         address = opcode & 0x0FFF
+
+        @pc = address
+      when 0x2000
+        address = opcode & 0x0FFF
+
+        @sp += 1
+        raise "Stack overflow"  unless @sp < STACK_SIZE
+        @stack[@sp] = @pc
 
         @pc = address
       when 0x3000
@@ -46,35 +63,28 @@ module ElOcho
         value = opcode & 0x00FF
 
         @pc += 2  if @v[x] == value
-        @pc += 2
       when 0x4000
         x = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
         @pc += 2  if @v[x] != value
-        @pc += 2
       when 0x5000
         if (opcode & 0x000F) == 0
           x = (opcode & 0x0F00) >> 8
           y = (opcode & 0x00F0) >> 4
 
           @pc += 2  if @v[x] == @v[y]
-          @pc += 2
         end
       when 0x6000
         x = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
         @v[x] = value
-
-        @pc += 2
       when 0x7000
         x = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
         @v[x] = (@v[x] + value) & 0xFF
-
-        @pc += 2
       when 0x8000
         x = (opcode & 0x0F00) >> 8
         y = (opcode & 0x00F0) >> 4
@@ -110,22 +120,17 @@ module ElOcho
           @v[0xF] = (@v[x] & 0x80) >> 7
           @v[x] = (@v[x] << 1) & 0xFF
         end
-
-        @pc += 0x002
       when 0x9000
         if (opcode & 0x000F) == 0
           x = (opcode & 0x0F00) >> 8
           y = (opcode & 0x00F0) >> 4
 
           @pc += 2  if @v[x] != @v[y]
-          @pc += 2
         end
       when 0xA000
         address = opcode & 0x0FFF
 
         @i = address
-
-        @pc += 2
       when 0xB000
         address = opcode & 0x0FFF
 
