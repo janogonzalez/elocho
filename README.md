@@ -30,15 +30,15 @@ This is a side project, so I don't know.
 
 ### Your emulator sucks! Where can I find a decent one?
 
-Mimey is a work in progress. In the meantime [let me help you find
-one][emulators].
+El Ocho is a work in progress. In the meantime [let me help you find one][
+emulators].
 
 [emulators]: http://bit.ly/1hTlxEO
 
 ### Why do you want to build yet another CHIP-8 emulator?
 
 According to a lot of programmers CHIP-8 is the easiest game platform to
-emulate and my [GameBoy emulator][mimey] will take some time to complete, so I
+emulate and my [Game Boy emulator][mimey] will take some time to complete, so I
 just want to have at least one finished emulator in the near future.
 
 [mimey]: https://github.com/janogonzalez/mimey
