@@ -1,10 +1,15 @@
 module ElOcho
   class CPU
+    # Size of the memory
+    MEMORY_SIZE = 4096
+    # Start address for the programs
+    PROGRAM_MEMORY_START = 0x200
+
     # V0 to VF: The 16 8-bit general purpose registers.
     attr_reader :v
-    # PC: The 16-bit program counter register.
+    # PC: The 12-bit program counter register.
     attr_reader :pc
-    # I: The 16-bit memory address register.
+    # I: The 12-bit memory address register.
     attr_reader :i
     # The memory, 4k 8-bit cells.
     attr_reader :memory
@@ -12,18 +17,18 @@ module ElOcho
     # Initializes a new CPU with the default values.
     def initialize
       @v = Array.new(16, 0x00)
-      @pc = 0x200
+      @pc = PROGRAM_MEMORY_START
       @i = 0x000
-      @memory = Array.new(4096, 0x00)
+      @memory = Array.new(MEMORY_SIZE, 0x00)
     end
 
     # Loads a rom into memory.
     def load(rom)
-      offset = 0
+      index = 0
 
       rom.each do |byte|
-        @memory[offset + 0x200] = byte
-        offset += 1
+        @memory[index + PROGRAM_MEMORY_START] = byte
+        index += 1
       end
     end
 
@@ -37,82 +42,73 @@ module ElOcho
 
         @pc = address
       when 0x3000
-        register = (opcode & 0x0F00) >> 8
+        x = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
-        if @v[register] == value
-          @pc += 4
-        else
-          @pc += 2
-        end
+        @pc += 2  if @v[x] == value
+        @pc += 2
       when 0x4000
-        register = (opcode & 0x0F00) >> 8
+        x = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
-        if @v[register] != value
-          @pc += 4
-        else
-          @pc += 2
-        end
+        @pc += 2  if @v[x] != value
+        @pc += 2
       when 0x5000
         if (opcode & 0x000F) == 0
           x = (opcode & 0x0F00) >> 8
           y = (opcode & 0x00F0) >> 4
 
-          if @v[x] == @v[y]
-            @pc += 4
-          else
-            @pc += 2
-          end
+          @pc += 2  if @v[x] == @v[y]
+          @pc += 2
         end
       when 0x6000
-        register = (opcode & 0x0F00) >> 8
+        x = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
-        @v[register] = value
+        @v[x] = value
 
-        @pc += 0x002
+        @pc += 2
       when 0x7000
-        register = (opcode & 0x0F00) >> 8
+        x = (opcode & 0x0F00) >> 8
         value = opcode & 0x00FF
 
-        @v[register] = (@v[register] + value) & 0xFF
+        @v[x] = (@v[x] + value) & 0xFF
 
-        @pc += 0x002
+        @pc += 2
       when 0x8000
-        to = (opcode & 0x0F00) >> 8
-        from = (opcode & 0x00F0) >> 4
+        x = (opcode & 0x0F00) >> 8
+        y = (opcode & 0x00F0) >> 4
 
         case opcode & 0x000F
         when 0x0000
-          @v[to] = @v[from]
+          @v[x] = @v[y]
         when 0x0001
-          @v[to] = (@v[to] | @v[from])
+          @v[x] = (@v[x] | @v[y])
         when 0x0002
-          @v[to] = (@v[to] & @v[from])
+          @v[x] = (@v[x] & @v[y])
         when 0x0003
-          @v[to] = (@v[to] ^ @v[from])
+          @v[x] = (@v[x] ^ @v[y])
         when 0x0004
-          result = @v[to] + @v[from]
+          result = @v[x] + @v[y]
 
           @v[0xF] = (result > 0xFF) ? 1 : 0
-          @v[to] = result & 0xFF
+          @v[x] = result & 0xFF
         when 0x0005
-          result = @v[to] - @v[from]
+          result = @v[x] - @v[y]
 
-          @v[0xF] = (@v[to] > @v[from]) ? 1 : 0
-          @v[to] = result & 0xFF
+          @v[0xF] = (@v[x] > @v[y]) ? 1 : 0
+          @v[x] = result & 0xFF
         when 0x0006
-          @v[0xF] = @v[to] & 0x01
-          @v[to] = @v[to] >> 1
+          @v[0xF] = @v[x] & 0x01
+          @v[x] = @v[x] >> 1
         when 0x0007
-          result = @v[from] - @v[to]
+          result = @v[y] - @v[x]
 
-          @v[0xF] = (@v[from] > @v[to]) ? 1 : 0
-          @v[to] = result & 0xFF
+          @v[0xF] = (@v[y] > @v[x]) ? 1 : 0
+          @v[x] = result & 0xFF
         when 0x0008
-          @v[0xF] = (@v[to] & 0x80) >> 7
-          @v[to] = (@v[to] << 1) & 0xFF
+          @v[0xF] = (@v[x] & 0x80) >> 7
+          @v[x] = (@v[x] << 1) & 0xFF
         end
 
         @pc += 0x002
@@ -121,16 +117,14 @@ module ElOcho
           x = (opcode & 0x0F00) >> 8
           y = (opcode & 0x00F0) >> 4
 
-          if @v[x] != @v[y]
-            @pc += 4
-          else
-            @pc += 2
-          end
+          @pc += 2  if @v[x] != @v[y]
+          @pc += 2
         end
       when 0xA000
         address = opcode & 0x0FFF
 
         @i = address
+
         @pc += 2
       when 0xB000
         address = opcode & 0x0FFF
