@@ -6,6 +6,25 @@ describe ElOcho::CPU do
     @cpu = ElOcho::CPU.new
   end
 
+  describe "with a 00EE instruction" do
+    it "sets the PC as the address from the top of the stack" do
+      @cpu.load [0x22, 0x02,
+                 0x62, 0x84,
+                 0x00, 0xEE]
+      3.times { @cpu.step }
+      @cpu.sp.must_equal -1
+      @cpu.pc.must_equal 0x202
+    end
+
+    it "fails then the stack underflows" do
+      @cpu.load [0x00, 0xEE]
+
+      proc {
+        @cpu.step
+      }.must_raise RuntimeError
+    end
+  end
+
   describe "with a 1NNN instruction" do
     it "sets PC to NNN" do
       @cpu.load [0x14, 0x82]

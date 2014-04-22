@@ -51,7 +51,13 @@ module ElOcho
         when 0x0000
           # Ignored
         when 0x00E0
-        when 0x0EE
+        when 0x00EE
+          raise "Stack underflow"  unless @sp >= 0
+
+          address = @stack[@sp]
+          @sp -= 1
+
+          @pc = address
         end
       when 0x1000
         address = opcode & 0x0FFF
