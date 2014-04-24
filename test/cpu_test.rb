@@ -319,4 +319,25 @@ describe ElOcho::CPU do
       @cpu.pc.must_equal 0x183
     end
   end
+
+  describe "with a FX1E instruction" do
+    it "sets I to I + VX" do
+      @cpu.load [0x62, 0x80,
+                 0xA4, 0x02,
+                 0xF2, 0x1E]
+      3.times { @cpu.step }
+      @cpu.i.must_equal 0x482
+      @cpu.pc.must_equal 0x206
+    end
+
+    it "applies the 0xFFF mask to the result" do
+      @cpu.load [0x62, 0x83,
+                 0xAF, 0xFF,
+                 0xF2, 0x1E]
+      3.times { @cpu.step }
+      @cpu.i.must_equal 0x082
+      @cpu.pc.must_equal 0x206
+
+    end
+  end
 end

@@ -158,6 +158,10 @@ module ElOcho
         when 0x0015
         when 0x0018
         when 0x001E
+          x = (opcode & 0x0F00) >> 8
+          result = @i + @v[x]
+
+          @i = result & 0xFFF
         when 0x0029
         when 0x0033
         when 0x0055
